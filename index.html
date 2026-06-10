@@ -50,6 +50,8 @@
       user-select: none;
       pointer-events: none;
     }
+
+    /* === CARDS === */
     .card-overlay {
       position: absolute;
       cursor: pointer;
@@ -58,9 +60,7 @@
       align-items: center;
       justify-content: center;
     }
-    .card-overlay:not(.revealed):hover .card-hint {
-      opacity: 1;
-    }
+    .card-overlay:not(.revealed):hover .card-hint { opacity: 1; }
     .ctrl-img {
       position: absolute;
       width: 80%;
@@ -113,6 +113,34 @@
       color: #ffd700;
       text-shadow: 1px 1px 0 #000;
     }
+
+    /* === CORAÇÕES === */
+    .heart-overlay {
+      position: absolute;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .heart-gray {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+      image-rendering: pixelated;
+      animation: none;
+    }
+    .heart-gray.lost {
+      display: block;
+      animation: fadeGray 0.2s ease forwards;
+    }
+    .heart-gray.restore-lost {
+      display: block;
+      animation: none;
+      opacity: 1;
+    }
+    @keyframes fadeGray {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -151,36 +179,99 @@
       </div>
     </div>
 
+    
+    <div class="heart-overlay" id="heart1"
+         style="left:79.35%; top:5.02%; width:2.10%; height:3.89%">
+      <img class="heart-gray" id="himg1"
+           src="data:image/png;base64,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" alt="coração perdido" />
+    </div>
+
+    <div class="heart-overlay" id="heart2"
+         style="left:83.00%; top:5.02%; width:2.10%; height:3.89%">
+      <img class="heart-gray" id="himg2"
+           src="data:image/png;base64,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" alt="coração perdido" />
+    </div>
+
+    <div class="heart-overlay" id="heart3"
+         style="left:86.60%; top:5.02%; width:2.10%; height:3.89%">
+      <img class="heart-gray" id="himg3"
+           src="data:image/png;base64,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" alt="coração perdido" />
+    </div>
+
+    <div class="heart-overlay" id="heart4"
+         style="left:90.20%; top:5.02%; width:2.15%; height:3.89%">
+      <img class="heart-gray" id="himg4"
+           src="data:image/png;base64,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" alt="coração perdido" />
+    </div>
+
+    <div class="heart-overlay" id="heart5"
+         style="left:93.85%; top:5.02%; width:2.10%; height:3.89%">
+      <img class="heart-gray" id="himg5"
+           src="data:image/png;base64,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" alt="coração perdido" />
+    </div>
+
   </div>
+
   <script>
-    const STORAGE_KEY = 'pixelShowcaseCards';
-    function loadState() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {1:false,2:false,3:false}; }
+    const CARDS_KEY  = 'pixelShowcaseCards';
+    const HEARTS_KEY = 'pixelShowcaseHearts';
+
+    /* ---- CARDS ---- */
+    function loadCards() {
+      try { return JSON.parse(localStorage.getItem(CARDS_KEY)) || {1:false,2:false,3:false}; }
       catch(e) { return {1:false,2:false,3:false}; }
     }
-    function saveState(s) {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e) {}
+    function saveCards(s) {
+      try { localStorage.setItem(CARDS_KEY, JSON.stringify(s)); } catch(e) {}
     }
     function applyCard(n, revealed, animate) {
       const card = document.getElementById('card' + n);
       const img  = document.getElementById('img' + n);
       if (revealed) {
-        img.classList.remove('visible', 'restore');
+        img.classList.remove('visible','restore');
         if (animate) { void img.offsetWidth; img.classList.add('visible'); }
         else { img.classList.add('restore'); }
         card.classList.add('revealed');
       } else {
-        img.classList.remove('visible', 'restore');
+        img.classList.remove('visible','restore');
         card.classList.remove('revealed');
       }
     }
-    const state = loadState();
-    [1,2,3].forEach(n => applyCard(n, state[n], false));
+    const cardState = loadCards();
+    [1,2,3].forEach(n => applyCard(n, cardState[n], false));
     [1,2,3].forEach(n => {
       document.getElementById('card'+n).addEventListener('click', () => {
-        state[n] = !state[n];
-        applyCard(n, state[n], true);
-        saveState(state);
+        cardState[n] = !cardState[n];
+        applyCard(n, cardState[n], true);
+        saveCards(cardState);
+      });
+    });
+
+    /* ---- CORAÇÕES ---- */
+    function loadHearts() {
+      try { return JSON.parse(localStorage.getItem(HEARTS_KEY)) || {1:false,2:false,3:false,4:false,5:false}; }
+      catch(e) { return {1:false,2:false,3:false,4:false,5:false}; }
+    }
+    function saveHearts(s) {
+      try { localStorage.setItem(HEARTS_KEY, JSON.stringify(s)); } catch(e) {}
+    }
+    function applyHeart(n, lost, animate) {
+      const img = document.getElementById('himg' + n);
+      if (lost) {
+        img.classList.remove('lost','restore-lost');
+        if (animate) { void img.offsetWidth; img.classList.add('lost'); }
+        else { img.classList.add('restore-lost'); }
+      } else {
+        img.classList.remove('lost','restore-lost');
+      }
+    }
+    const heartState = loadHearts();
+    [1,2,3,4,5].forEach(n => applyHeart(n, heartState[n], false));
+    [1,2,3,4,5].forEach(n => {
+      document.getElementById('heart'+n).addEventListener('click', () => {
+        heartState[n] = !heartState[n];
+        applyHeart(n, heartState[n], true);
+        saveHearts(heartState);
       });
     });
   </script>
